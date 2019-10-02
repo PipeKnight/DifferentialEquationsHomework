@@ -1,3 +1,3 @@
 # DifferentialEquationsHomework
 
-Solutions for HSE AMI "Differential Equation"s course
+Solutions for my "Differential Equation"s course. HSE CS AMI, 2018-2019
