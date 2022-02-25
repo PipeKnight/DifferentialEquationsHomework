@@ -177,9 +177,9 @@ def eulersplot(f, xa, xb, ya, n = 500, toolarge = 1E10, **kw):
     - n : number of steps (higher the better)
     """
     h = (xb - xa) / float(n)
-    x = [xa] 
+    x = [xa]
     y = [ya]
-    for i in range(1,n+1):
+    for _ in range(1,n+1):
         newy = y[-1] + h * f(x[-1], y[-1])
         if abs(newy) > toolarge:
             break
@@ -293,12 +293,12 @@ def phaseportrait(fs, inits, t=(-5, 5), n=100, firstint=None, arrow=True,
                 segments=[(tmin, tmin/n), (tmax, tmax/n)]
             else:
                 segments=[(tmax, tmax/n)]
-            
+
             for T, delta_t in segments:
                 integrator.set_initial_value(x0)
                 points.append(x0)
                 sign = np.sign(delta_t)
-                
+
                 while (sign * integrator.t < sign * T):
                     point = integrator.integrate(integrator.t + delta_t)
                     if not integrator.successful():
@@ -329,7 +329,7 @@ def phaseportrait(fs, inits, t=(-5, 5), n=100, firstint=None, arrow=True,
             # fallback if something goes wrong
         levels = sorted({firstint(x0) for x0 in inits})
         plt.contour(X, Y, Z, levels=levels, colors=contourcolor)
-        
+
     for x0 in inits:
         vector = np.array(fs(x0))
         if arrow:
@@ -337,11 +337,8 @@ def phaseportrait(fs, inits, t=(-5, 5), n=100, firstint=None, arrow=True,
                 direction = vector / scipy.linalg.norm(vector) * 0.01
             else:
                 direction = None
-            if 'color' in kw:
-                arrow_params = dict(fc=kw['color'],
-                                    ec=kw['color'])
-            else:
-                arrow_params = {}
+            arrow_params = dict(fc=kw['color'],
+                                    ec=kw['color']) if 'color' in kw else {}
             if direction is not None:
                 plt.arrow(x0[0] - direction[0],
                           x0[1] - direction[1],
@@ -414,23 +411,21 @@ def onedim_phasecurves(left, right, singpoints, directions,
 
     # We have to process special case when left or right border is singular
     # move them to special list lonesingpoints to process later
-    if singpoints:
-        if singpoints[0] == left:
-            singpoints.pop(0)
-            directions.pop(0)
-            n -= 1
-    if singpoints:
-        if singpoints[-1] == right:
-            singpoints.pop()
-            directions.pop()
-            n -= 1
+    if singpoints and singpoints[0] == left:
+        singpoints.pop(0)
+        directions.pop(0)
+        n -= 1
+    if singpoints and singpoints[-1] == right:
+        singpoints.pop()
+        directions.pop()
+        n -= 1
 
     xs = np.zeros(n + 1) + shift
     ys = []
     us = np.zeros(n + 1)
     vs = []
 
-    
+
     endpoints = [left] + list(singpoints) + [right]
     for i, direction in enumerate(directions):
         if direction > 0:
